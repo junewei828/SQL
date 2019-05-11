@@ -1,0 +1,28 @@
+SQL stores data in tables. NoSQL stores data in forms other than tables; 
+these forms can be graphs, key-value pairs, or one of many other options, 
+but most commonly they are documents. These documents are very similar to JSON 
+objects with field-value pairs. For example, our NoSQL database might store a user 
+like this:
+
+{
+  username: "mongoDB4ever",
+  email: "alexa@gmail.com",
+  password_digest: "Ke&63h1z$mK9jd37n"
+}
+
+So instead of rows, NoSQL has documents. These documents can be stored in collections, 
+which are similar to SQL's tables in that they hold and organize related entries in the 
+database. Beyond that, however, they are quite different. Unlike tables, collections do 
+not have schema. They are not restricted to particular columns/fields. They do not require 
+specific data types, like strings, integers, or dates. They are much more flexible. This 
+means that the design does not have to be specified upfront.
+
+{
+  username: "mongoDB4ever",
+  email: "alexa@gmail.com",
+  password_digest: "Ke&63h1z$mK9jd37n",
+  featured_photo: {
+    url: "https://imgur.com/FRK6meX",
+    caption: "best pizza ever"
+  }
+}

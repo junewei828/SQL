@@ -311,3 +311,169 @@ FROM mytable
 WHERE column
     IN/NOT IN (SELECT another_column
                FROM another_table);
+
+Your database schema is a description of the organization of your database into 
+tables and columns.
+
+Here are a few of the most common datatypes:
+
+BOOLEAN
+INT
+FLOAT (stores "floating point" numbers)
+VARCHAR(255) (essentialy a string with a length limit of 255 chars)
+TEXT (a string of unlimited length)
+DATE
+DATETIME
+TIME
+BLOB (non-textual, binary data; e.g., an image)
+
+**Inner join** produces only the set of records that match in both Table A and 
+Table B.
+
+Full outer join produces the set of all records in Table A and Table B, with matching records from both sides where available. If there is no match, the missing side will contain null.
+
+Left outer join produces a complete set of records from Table A, with the matching records (where available) in Table B. If there is no match, the right side will contain null.
+
+SELECT * FROM TableA
+LEFT OUTER JOIN TableB
+ON TableA.name = TableB.name
+WHERE TableB.id IS null
+
+To produce the set of records only in Table A, but not in Table B, we perform the same left outer join, then exclude the records we don't want from the right side via a where clause.
+
+SELECT * FROM TableA
+FULL OUTER JOIN TableB
+ON TableA.name = TableB.name
+WHERE TableA.id IS null
+OR TableB.id IS null
+
+To produce the set of records unique to Table A and Table B, we perform the same full outer join, then **exclude the records we don't want from both sides via a where clause**.
+
+SELECT * FROM TableA
+CROSS JOIN TableB
+This joins "everything to everything", resulting in 4 x 4 = 16 rows, far more than we had in the original sets. If you do the math, you can see why this is a very dangerous join to run against large tables.
+
+SELECT
+  bands.*
+FROM
+  bands
+JOIN (
+  SELECT
+    albums.*
+  FROM
+    albums
+  WHERE
+    album.type = "POP"
+  GROUP BY
+    album.band_id
+  HAVING
+    COUNT(*) > 3
+  ) AS pop_group_albums ON bands.id = pop_group_albums.band_id
+WHERE
+  band.leader_id IN (
+    SELECT
+      musicians.id
+    FROM
+      musicians
+    WHERE
+      musicians.birth_yr > 1940
+  )
+
+mass if the rental rate is 0.99
+economic if the rental rate is 1.99
+luxury if the rental rate is 4.99
+SELECT
+ SUM (
+ CASE
+ WHEN rental_rate = 0.99 THEN
+ 1
+ ELSE
+ 0
+ END
+ ) AS "Mass",
+ SUM (
+ CASE
+ WHEN rental_rate = 2.99 THEN
+ 1
+ ELSE
+ 0
+ END
+ ) AS "Economic",
+ SUM (
+ CASE
+ WHEN rental_rate = 4.99 THEN
+ 1
+ ELSE
+ 0
+ END
+ ) AS "Luxury"
+FROM
+ film;
+
+CASE expression
+WHEN value_1 THEN
+ result_1
+WHEN value_2 THEN
+ result_2 
+[WHEN ...]
+ELSE
+ result_n
+END;
+
+SELECT
+ SUM (
+ CASE rental_rate
+ WHEN 0.99 THEN
+ 1
+ ELSE
+ 0
+ END
+ ) AS "Mass",
+ SUM (
+ CASE rental_rate
+ WHEN 2.99 THEN
+ 1
+ ELSE
+ 0
+ END
+ ) AS "Economic",
+ SUM (
+ CASE rental_rate
+ WHEN 4.99 THEN
+ 1
+ ELSE
+ 0
+ END
+ ) AS "Luxury"
+FROM
+ film;
+
+The COALESCE function accepts an unlimited number of arguments. It returns the first argument that is not null. If all arguments are null, the COALESCE function will return null.
+
+SELECT
+ COALESCE (NULL, 2 , 1); => 2
+
+
+SELECT
+ product,
+ (price - COALESCE(discount,0)) AS net_price
+FROM
+ items;
+
+SELECT
+ product,
+ (
+ price - CASE
+ WHEN discount IS NULL THEN
+ 0
+ ELSE
+ discount
+ END
+ ) AS net_price
+FROM
+ items;
+
+
+https://open.appacademy.io/learn/full-stack-in-person/full-stack-in-person-sql/postgresql-setup
+cat learning_sql_example_postgres.sql | psql bank
+takes the output of the first command (cat learning_sql_example_postgres.sql, which just outputs the contents of the file) and uses it as the input of the command on the right (psql bank, which runs SQL commands).
